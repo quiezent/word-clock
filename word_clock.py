@@ -101,6 +101,10 @@ class WordClock(tk.Tk):
         """
         Returns the words to highlight based on the current hour and minute.
         """
+        # Normalize the hour so 24-hour input is converted to 12-hour format.
+        hour = hour % 12
+        if hour == 0:
+            hour = 12
         self.words_to_highlight = []
 
         # Always add "IT IS" at the beginning if it's exactly on the hour
