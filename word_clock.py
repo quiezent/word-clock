@@ -157,6 +157,9 @@ class WordClock(tk.Tk):
         """
         if self.specified_time:
             hour, minute = map(int, self.specified_time.split(':'))
+            hour = hour % 12
+            if hour == 0:
+                hour = 12
         else:
             current_time = time.localtime()
             hour = current_time.tm_hour % 12
