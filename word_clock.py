@@ -73,19 +73,27 @@ class WordClock(tk.Tk):
             dot.grid(row=0, column=i, padx=5)
             self.dots.append(dot)
 
-    def highlight_word(self, word):
+    def highlight_word(self, word, *, hour_word=False):
         """
-        Highlights all instances of the given word using their starting positions from word_positions.
+        Highlights the given word. When a word appears twice in the grid
+        ("FIVE" and "TEN"), highlight only one instance depending on whether the
+        word represents minutes or the hour.
         """
-        if word in self.word_positions:
-            positions = self.word_positions[word]  # Get all starting positions for the word
-            for start_row, start_col in positions:
-                for i, char in enumerate(word):
-                    # Make sure we stay within the bounds of the grid
-                    if start_col + i < len(self.letters[start_row]):
-                        lbl = self.letters[start_row][start_col + i]
-                        if lbl.cget("text") == char:
-                            lbl.configure(fg='white')
+        if word not in self.word_positions:
+            return
+
+        positions = self.word_positions[word]
+
+        # Words like "FIVE" and "TEN" occur twice: once for minutes and once for
+        # hour names. If `hour_word` is True, use the second occurrence;
+        # otherwise use the first.
+        index = 1 if hour_word and len(positions) > 1 else 0
+        start_row, start_col = positions[index]
+        for i, char in enumerate(word):
+            if start_col + i < len(self.letters[start_row]):
+                lbl = self.letters[start_row][start_col + i]
+                if lbl.cget("text") == char:
+                    lbl.configure(fg='white')
 
     def reset_labels(self):
         """
@@ -178,8 +186,13 @@ class WordClock(tk.Tk):
         words_to_highlight = self.get_time_representation(hour, minute)
 
         # Highlight the appropriate words
-        for word in words_to_highlight:
-            self.highlight_word(word)
+        for i, word in enumerate(words_to_highlight):
+            hour_word = i == len(words_to_highlight) - 1
+            try:
+                self.highlight_word(word, hour_word=hour_word)
+            except TypeError:
+                # Support older highlight_word implementations used in tests
+                self.highlight_word(word)
 
         # Highlight extra dots to represent additional minutes, if applicable
         extra_minutes = minute % 5
