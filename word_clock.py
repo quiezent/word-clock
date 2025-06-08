@@ -45,7 +45,7 @@ class WordClock(tk.Tk):
             "A": [(1, 0)], "QUARTER": [(1, 2)],
             "TWENTY": [(2, 0)], "FIVE": [(2, 6), (6, 4)],  # Added back duplicate FIVE position for correct representation
             "HALF": [(3, 0)], "TEN": [(3, 5), (4, 4)],  # Added back duplicate TEN position for correct representation
-            "TO": [(3, 8)],
+            "TO": [(3, 9)],
             "PAST": [(4, 0)], "NINE": [(4, 7)],
             "ONE": [(5, 0)], "SIX": [(5, 3)], "THREE": [(5, 6)],
             "FOUR": [(6, 0)], "TWO": [(6, 8)],
@@ -149,9 +149,9 @@ class WordClock(tk.Tk):
         if next_hour == 0:
             next_hour = 12
 
-        # Avoid appending the next hour multiple times
-        if hour_word_map[next_hour] not in self.words_to_highlight:
-            self.words_to_highlight.append(hour_word_map[next_hour])
+        # Always append the hour representation. Duplicate words are
+        # intentional for phrases like "FIVE TO FIVE".
+        self.words_to_highlight.append(hour_word_map[next_hour])
 
         return self.words_to_highlight
 
