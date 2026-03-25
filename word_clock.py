@@ -163,12 +163,29 @@ class WordClock(tk.Tk):
 
         return self.words_to_highlight
 
+    @staticmethod
+    def parse_specified_time(specified_time):
+        """
+        Parse a specified time in HH:MM format and validate ranges.
+        """
+        try:
+            hour_text, minute_text = specified_time.split(':')
+            hour = int(hour_text)
+            minute = int(minute_text)
+        except (ValueError, AttributeError):
+            raise ValueError("specified_time must be in HH:MM format") from None
+
+        if not (0 <= hour <= 23 and 0 <= minute <= 59):
+            raise ValueError("specified_time must be within 00:00-23:59")
+
+        return hour, minute
+
     def update_clock(self):
         """
         Updates the word clock to reflect the current time.
         """
         if self.specified_time:
-            hour, minute = map(int, self.specified_time.split(':'))
+            hour, minute = self.parse_specified_time(self.specified_time)
             hour = hour % 12
             if hour == 0:
                 hour = 12

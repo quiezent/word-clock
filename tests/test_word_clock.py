@@ -36,3 +36,17 @@ def test_seventeen_fiftyfive():
 def test_four_fiftyfive():
     # 4:55 should highlight FIVE TO FIVE with both FIVEs at different positions
     assert get_representation(4, 55) == ["FIVE", "TO", "FIVE"]
+
+
+def test_parse_specified_time_accepts_24_hour_boundaries():
+    assert WordClock.parse_specified_time("00:00") == (0, 0)
+    assert WordClock.parse_specified_time("23:59") == (23, 59)
+
+
+def test_parse_specified_time_rejects_invalid_values():
+    with pytest.raises(ValueError):
+        WordClock.parse_specified_time("24:00")
+    with pytest.raises(ValueError):
+        WordClock.parse_specified_time("13:99")
+    with pytest.raises(ValueError):
+        WordClock.parse_specified_time("bad-input")
